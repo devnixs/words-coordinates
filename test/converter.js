@@ -1,4 +1,13 @@
-import { convertToString, truncate, convertToLatLng, padWithZeros } from '../src/converter.js';
+import {
+  truncate,
+  padWithZeros,
+  shuffle,
+  unshuffle,
+  split,
+  unsplit,
+  combineAsBinary,
+  binaryFromLatitudeLongitude
+} from '../src/converter.js';
 import { expect } from 'chai';
 
 const carnoux = {
@@ -18,20 +27,34 @@ describe('Converter', () => {
     expect(result).to.equal('043.2589');
   });
 
-  it('should convert latitudes and longitudes to string', () => {
-    const result = convertToString(carnoux.lat, carnoux.lng);
-    expect(result).to.equal('04325890055654');
+  it('should create a binary version of the latitude and longitude', () => {
+    const result = combineAsBinary(360, 180);
+    expect(result).to.equal('1101101110111010000000110110111011101000000');
   });
 
-  it('should convert strings to lat and lng', () => {
-    const {lat, lng} = convertToLatLng('04325890055654');
-    expect(lat).to.equal(43.2589);
-    expect(lng).to.equal(5.5654);
+  it('should recreate latitudes and longitudes from binary', () => {
+    const {lat, lng} = binaryFromLatitudeLongitude('1101101110111010000000110110111011101000000');
+    expect(lat).to.equal(360);
+    expect(lng).to.equal(180);
   });
-
 
   it('should shuffle', () => {
-    const result = convertToLatLng('04325890055654');
-    
+    const result = shuffle('1101101110111010000000110110111011101000000');
+    expect(result).to.equal('1001011101001101100001000110111011000111001');
+  });
+
+  it('should shuffle back', () => {
+    const result = unshuffle('1001011101001101100001000110111011000111001');
+    expect(result).to.equal('1101101110111010000000110110111011101000000');
+  });
+
+  it('should split into 3 numbers', () => {
+    const results = split('1001011101001101100001000110111011000111001');
+    expect(results).to.deep.equal(['100101110100110', '110000100011011', '1011000111001']);
+  });
+
+  it('should regroup 3 numbers', () => {
+    const results = unsplit(['100101110100110', '110000100011011', '1011000111001']);
+    expect(results).to.equal('1001011101001101100001000110111011000111001');
   });
 });
