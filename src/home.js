@@ -136,13 +136,13 @@ class HomePage extends React.Component {
   }
 
   onWordsTyped(event){
-    const typedWords = event.target.value.trim().toLowerCase();
+    const typedWords = event.target.value.toLowerCase();
 
     const update ={
       typedWords,
     }
 
-    const splittedWords = typedWords.split(' ');
+    const splittedWords = typedWords.trim().split(' ');
     if(splittedWords.length === 3){
       if(doWordsExist(splittedWords)){
         const {lat,lng} = getLatLngFromThreeWords(splittedWords);
