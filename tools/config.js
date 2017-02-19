@@ -12,5 +12,5 @@ module.exports = {
   title: 'Words coordinate',        // Your website title
   url: 'https://github.com/devnixs/words-coordinates',          // Your website URL
   project: 'words-coordinates',      // Firebase project. See README.md -> How to Deploy
-  trackingID: 'UA-XXXXX-Y',                 // Google Analytics Site's ID
+  trackingID: 'UA-92261954-1',                 // Google Analytics Site's ID
 };
