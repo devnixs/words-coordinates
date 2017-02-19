@@ -4,7 +4,12 @@ const numberOfDecimals = 4;
 const numberOfIntegerNumbers = 3;
 const powerOften = Math.pow(10, numberOfDecimals);
 
-const shuffleVector = [28, 9, 42, 22, 20, 32, 33, 1, 2, 29, 37, 19, 10, 23, 41, 14, 6, 40, 21, 17, 27, 4, 35, 24, 38, 3, 26, 5, 36, 7, 0, 39, 30, 11, 16, 15, 31, 34, 8, 12, 18, 13, 25];
+const shuffleMatrix = [
+    [0, 20, 40, 17, 37, 14, 34, 11, 31, 8, 28, 5, 25, 22, 24],
+    [1, 19, 41, 16, 38, 13, 35, 10, 32, 7, 29, 4, 26, 23, 27],
+    [21, 18, 42, 15, 39, 12, 36, 9, 33, 6, 30, 2, 3],
+]
+const shuffleVector = _.flatten(shuffleMatrix);
 
 
 export function getThreeWordsBinariesLengths() {
@@ -16,7 +21,11 @@ export function getLatLngBinariesLengths() {
 }
 
 
-export function truncate(number) {
+export function convertToInteger(number) {
+    return Math.round(number * powerOften);
+}
+
+export function limitDecimals(number) {
     return Number(number.toFixed(numberOfDecimals));
 }
 
@@ -25,17 +34,25 @@ export function padWithZeros(number) {
 }
 
 export function setLatInRange(input) {
-    return truncate(input + 90) * powerOften;
+    if (input >= 0) {
+        return convertToInteger(input);
+    } else {
+        return convertToInteger(90 + Math.abs(input));
+    }
 }
 export function setLngInRange(input) {
-    return truncate(input + 180) * powerOften;
+    return convertToInteger(input + 180);
 }
 
 export function unsetLatInRange(input) {
-    return truncate((input) / powerOften - 90);
+    if (input >= 90 * powerOften) {
+        return -1 * limitDecimals((input) / powerOften - 90);
+    } else {
+        return limitDecimals((input) / powerOften);
+    }
 }
 export function unsetLngInRange(input) {
-    return truncate(input / powerOften - 180);
+    return limitDecimals(input / powerOften - 180);
 }
 
 function setLength(input, length) {
@@ -56,15 +73,15 @@ export function combineAsBinary(lat, lng) {
     return latCorrectLength + lngCorrectLength;
 }
 
-export function binaryFromLatitudeLongitude(binary) {
+export function binaryToLatitudeLongitude(binary) {
     const binariesLengths = getLatLngBinariesLengths();
-    
+
     const lat = binary.substr(0, binariesLengths[0]);
     const lng = binary.substr(binariesLengths[0], binariesLengths[1]);
 
     return {
-        lat: truncate(parseInt(lat, 2)),
-        lng: truncate(parseInt(lng, 2))
+        lat: (parseInt(lat, 2)),
+        lng: (parseInt(lng, 2))
     }
 }
 
@@ -117,7 +134,7 @@ export function getLatLngFromThreeNumbers(numbers) {
     const shuffled = unsplit(padded);
     const binary = unshuffle(shuffled);
 
-    const {lat, lng} = binaryFromLatitudeLongitude(binary);
+    const {lat, lng} = binaryToLatitudeLongitude(binary);
 
     return {
         lat: unsetLatInRange(lat),

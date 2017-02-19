@@ -1,12 +1,12 @@
 import {
-  truncate,
+  convertToInteger,
   padWithZeros,
   shuffle,
   unshuffle,
   split,
   unsplit,
   combineAsBinary,
-  binaryFromLatitudeLongitude,
+  binaryToLatitudeLongitude,
   setLatInRange,
   setLngInRange,
   unsetLatInRange,
@@ -28,19 +28,14 @@ const carnoux2 = {
 
 describe('Converter', () => {
 
-  it('truncate should limit the number of decimals', () => {
-    const result = truncate(carnoux1.lat);
-    expect(result).to.equal(43.259);
-  });
-
-  it('should pad a number with zeros', () => {
-    const result = padWithZeros(43.2589);
-    expect(result).to.equal('043.2589');
+  it('should convert to integers', () => {
+    const result = convertToInteger(carnoux1.lat);
+    expect(result).to.equal(432590);
   });
 
   it('should set a latitude between 0 and 1800000', () => {
     const result = setLatInRange(43.2589);
-    expect(result).to.equal(1332589);
+    expect(result).to.equal(432589);
   });
 
   it('should set a longitude between 0 and 3600000', () => {
@@ -49,7 +44,7 @@ describe('Converter', () => {
   });
 
   it('should restore a latitude', () => {
-    const result = unsetLatInRange(1332589);
+    const result = unsetLatInRange(432589);
     expect(result).to.equal(43.2589);
   });
 
@@ -64,18 +59,18 @@ describe('Converter', () => {
   });
 
   it('should recreate latitudes and longitudes from binary', () => {
-    const {lat, lng} = binaryFromLatitudeLongitude('1101101110111010000001101101110111010000000');
+    const {lat, lng} = binaryToLatitudeLongitude('1101101110111010000001101101110111010000000');
     expect(lat).to.equal(1800000);
     expect(lng).to.equal(3600000);
   });
 
   it('should shuffle', () => {
     const result = shuffle('1101101110111010000000110110111011101000000');
-    expect(result).to.equal('1001011101001101100001000110111011000111001');
+    expect(result).to.equal('1000011101101101000000111111100000011011101');
   });
 
   it('should shuffle back', () => {
-    const result = unshuffle('1001011101001101100001000110111011000111001');
+    const result = unshuffle('1000011101101101000000111111100000011011101');
     expect(result).to.equal('1101101110111010000000110110111011101000000');
   });
 
@@ -91,18 +86,18 @@ describe('Converter', () => {
 
   it('should generate three numbers from lat lng', () => {
     const result = getThreeNumbersFromLatLng(carnoux1.lat, carnoux1.lng);
-    expect(result).to.deep.equal([19543, 29888, 5276]);
+    expect(result).to.deep.equal([7739, 13058, 2215]);
   });
 
   it('should generate three different numbers from different lat lng', () => {
     const result = getThreeNumbersFromLatLng(carnoux2.lat, carnoux2.lng);
-    expect(result).to.deep.equal([18519, 25792, 5276]);
+    expect(result).to.deep.equal([3643, 4866, 2215]);
   });
 
   it('should get lat lng back from three numbers', () => {
-    const result = getLatLngFromThreeNumbers([19543, 29888, 5276]);
+    const result = getLatLngFromThreeNumbers([7739, 13058, 2215]);
     expect(result).to.deep.equal({
-      lat: 43.2589,
+      lat: 43.259,
       lng: 5.5654
     });
   });
