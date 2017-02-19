@@ -17,6 +17,7 @@ const ejs = require('ejs');
 const webpack = require('webpack');
 const task = require('./task');
 const config = require('./config');
+const ncp = require('ncp').ncp;
 
 // Copy ./index.html into the /public folder
 const html = task('html', () => {
@@ -27,6 +28,22 @@ const html = task('html', () => {
   const output = render({ debug: webpackConfig.debug, bundle: assets.main.js, config });
   fs.writeFileSync('./public/index.html', output, 'utf8');
 });
+
+
+// Copy public to docs folder
+const copyDist = task('copydist', () => {
+  ncp.limit = 16;
+  return new Promise((resolve, reject)=>{
+    ncp('./public', './docs', function (err) {
+      if (err) {
+        return console.error(err);
+        reject(err);
+      }
+      resolve();
+    });
+  })
+});
+
 
 // Bundle JavaScript, CSS and image files with Webpack
 const bundle = task('bundle', () => {
@@ -52,4 +69,5 @@ module.exports = task('build', () => {
   return Promise.resolve()
     .then(bundle)
     .then(html)
+    .then(copyDist)
 });
