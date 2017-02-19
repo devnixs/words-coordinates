@@ -15,6 +15,7 @@ import {
   getLatLngFromThreeNumbers,
   getThreeWordsFromLatLng,
   getLatLngFromThreeWords,
+  doWordsExist
 } from '../src/converter.js';
 import { expect } from 'chai';
 
@@ -114,5 +115,15 @@ describe('Converter', () => {
       lat: 43.259,
       lng: 5.5654
     });
+  });
+
+  it('should tell if words exist', () => {
+    const result = doWordsExist(["characterized", "needing", "thanks"]);
+    expect(result).to.deep.equal(true);
+  });
+
+  it('should tell if words don\'t exist', () => {
+    const result = doWordsExist(["characterized", "needingtest", "thanks"]);
+    expect(result).to.deep.equal(false);
   });
 });

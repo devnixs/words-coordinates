@@ -152,3 +152,7 @@ export function getThreeWordsFromLatLng(lat, lng) {
 export function getLatLngFromThreeWords(words) {
     return getLatLngFromThreeNumbers(words.map(i=>dictionnary.indexOf(i)));
 }
+
+export function doWordsExist(words) {
+    return !words.find(i=> dictionnary.indexOf(i)===-1)
+}

@@ -38,6 +38,7 @@
     "classnames": "^2.2.5",
     "dotenv": "^2.0.0",
     "fastclick": "^1.0.6",
+    "google-map-react": "^0.22.3",
     "google-maps-react": "^1.0.19",
     "history": "^4.5.1",
     "istanbul": "^0.4.5",
