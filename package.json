@@ -14,7 +14,8 @@
   "scripts": {
     "start": "node src/app.js",
     "test": "mocha --compilers js:babel-core/register",
-    "test-watch": "mocha --compilers js:babel-core/register --watch"
+    "test-watch": "mocha --compilers js:babel-core/register --watch",
+    "cover":"istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec --compilers js:babel-core/register"
   },
   "dependencies": {
     "@types/chai": "^3.4.35",
