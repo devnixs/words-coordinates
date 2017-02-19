@@ -8,5 +8,5 @@ install:
 env:
     - npm_config_loglevel=warn
 script:
-    - istanbul cover ./node_modules/mocha/bin/_mocha --reporter lcovonly --compilers js:babel-core/register -- -R spec
+    - istanbul cover ./node_modules/mocha/bin/mocha --reporter lcovonly --compilers js:babel-core/register -- -R spec
     - codecov
