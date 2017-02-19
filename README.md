@@ -2,7 +2,7 @@
 
 # A global coordinate system, with words
 
-Converts Lat 43.258783, Lng 5.564971 to => brown, cat, house. Which is easier to remember.
+Converts Lat 43.258783, Lng 5.564971 to => brown, cat, house. Which is easier to remember or share.
 
 ### [Try me!](https://devnixs.github.io/words-coordinates/)
 
@@ -19,3 +19,19 @@ Converts Lat 43.258783, Lng 5.564971 to => brown, cat, house. Which is easier to
 | Split that into three binary numbers  | 100110001010111, 111010011000000, 1010010011100  |
 | Convert them back to base 10  | 19543, 29888, 5276  |
 | Assign each number a word  | brown, cat, house  |
+
+## Contributing
+
+Feel free to contribute, I love pull requests!
+
+To run the project : 
+```
+npm install
+npm start
+```
+
+To build :
+```
+npm install
+npm run build
+```
