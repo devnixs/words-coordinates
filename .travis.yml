@@ -4,7 +4,7 @@ node_js:
 - 6.9.4
 install:
     - npm install -g codecov
-    - npm install -g instanbul
+    - npm install -g istanbul 
 env:
     - npm_config_loglevel=warn
 script:
