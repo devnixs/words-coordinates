@@ -9,7 +9,7 @@ import {getThreeWordsFromLatLng, getLatLngFromThreeWords, doWordsExist} from './
 
 const MapContainer = styled.div`
   width:100%;
-  height:100%;
+  height: calc(100% - 126px);
   clear:both;
   position:relative;
 `;
@@ -33,7 +33,6 @@ const KnowTheWords = styled.div`
   background: #FFF3B0;
   padding-left:10px;
   padding-right:10px;
-  border:1px solid #E09F3E;
 `
 
 const CustomInput = styled.input`
@@ -66,6 +65,21 @@ const KnowTheWordsTitle = styled.h4`
   margin:12px;
 `
 
+
+const ByRaphael = styled.div`
+  position:absolute;
+  left:0;
+  bottom:0;
+  width:160px;
+  height:20px;
+  z-index:200;
+  background: #FFF3B0;
+  padding-left:10px;
+  padding-right:10px;
+  border:1px solid #E09F3E;
+  text-align:center;
+  `
+
 class HomePage extends React.Component {
 
   static propTypes = {
@@ -89,9 +103,26 @@ class HomePage extends React.Component {
       typedWords: words.join(' '),
     }
 
+    this.loadUserLocation();
+
     this.onClick=this.onClick.bind(this);
     this.onWordsTyped=this.onWordsTyped.bind(this);
     this.onCenterChanges=this.onCenterChanges.bind(this);
+  }
+
+  loadUserLocation(){
+    if(navigator && navigator.geolocation && navigator.geolocation.getCurrentPosition){
+      navigator.geolocation.getCurrentPosition((location) => {
+          const pos= {lat : location.coords.latitude, lng : location.coords.longitude};
+          const words = getThreeWordsFromLatLng(pos.lat,pos.lng);
+          this.setState({
+            markerPosition: pos,
+            center: pos,
+            words : words,
+            typedWords: words.join(' '),
+          })
+      });
+    }
   }
 
   onClick({ x, y, lat, lng, event }){
@@ -144,9 +175,10 @@ class HomePage extends React.Component {
             <KnowTheWordsTitle>I know the words</KnowTheWordsTitle>
             <CustomInput value={this.state.typedWords} onChange={this.onWordsTyped} />
           </KnowTheWords>
+          {/*<ByRaphael>By <a href="https://github.com/devnixs">Raphael ATALLAH</a></ByRaphael>*/}
           <GoogleMap
             onClick={this.onClick}
-              // apiKey={YOUR_GOOGLE_MAP_API_KEY} // set if you need stats etc ...
+            apiKey={'AIzaSyCXhXG7y6w4Fz3AgM0BhCyNo2RhhHDSCaE'}
             center={this.state.center}
             defaultCenter={this.state.initialCenter}
             onChange={this.onCenterChanges}
