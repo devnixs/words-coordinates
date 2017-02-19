@@ -106,7 +106,6 @@ export function getThreeNumbersFromLatLng(lat, lng) {
     const shuffled = shuffle(binary);
     const splitted = split(shuffled);
 
-    console.log(splitted);
     return splitted.map(i => parseInt(i, 2));
 }
 
