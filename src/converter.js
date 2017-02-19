@@ -1,5 +1,7 @@
 import _ from 'lodash';
 
+import dictionnary from './words.json';
+
 const numberOfDecimals = 4;
 const numberOfIntegerNumbers = 3;
 const powerOften = Math.pow(10, numberOfDecimals);
@@ -140,4 +142,13 @@ export function getLatLngFromThreeNumbers(numbers) {
         lat: unsetLatInRange(lat),
         lng: unsetLngInRange(lng),
     }
+}
+
+
+export function getThreeWordsFromLatLng(lat, lng) {
+    return getThreeNumbersFromLatLng(lat,lng).map(i=>dictionnary[i]);
+}
+
+export function getLatLngFromThreeWords(words) {
+    return getLatLngFromThreeNumbers(words.map(i=>dictionnary.indexOf(i)));
 }

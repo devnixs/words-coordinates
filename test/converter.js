@@ -12,7 +12,9 @@ import {
   unsetLatInRange,
   unsetLngInRange,
   getThreeNumbersFromLatLng,
-  getLatLngFromThreeNumbers
+  getLatLngFromThreeNumbers,
+  getThreeWordsFromLatLng,
+  getLatLngFromThreeWords,
 } from '../src/converter.js';
 import { expect } from 'chai';
 
@@ -27,7 +29,6 @@ const carnoux2 = {
 }
 
 describe('Converter', () => {
-
   it('should convert to integers', () => {
     const result = convertToInteger(carnoux1.lat);
     expect(result).to.equal(432590);
@@ -102,4 +103,16 @@ describe('Converter', () => {
     });
   });
 
+  it('should convert lat and lng to words', () => {
+    const result = getThreeWordsFromLatLng(carnoux1.lat, carnoux1.lng);
+    expect(result).to.deep.equal(["characterized", "needing", "thanks"]);
+  });
+
+  it('should get lat lng back from three numbers', () => {
+    const result = getLatLngFromThreeWords(["characterized", "needing", "thanks"]);
+    expect(result).to.deep.equal({
+      lat: 43.259,
+      lng: 5.5654
+    });
+  });
 });
