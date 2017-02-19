@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/devnixs/words-coordinates.svg?branch=master)](https://travis-ci.org/devnixs/words-coordinates)
+
 # A global coordinate system, with words
 
 Converts Lat 43.258783, Lng 5.564971 to => brown, cat, house. Which is easier to remember.
