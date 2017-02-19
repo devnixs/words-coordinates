@@ -38,35 +38,35 @@ describe('Converter', () => {
     expect(result).to.equal('043.2589');
   });
 
-  it('should set a latitude between 0 and 3600000', () => {
+  it('should set a latitude between 0 and 1800000', () => {
     const result = setLatInRange(43.2589);
-    expect(result).to.equal(2232589);
+    expect(result).to.equal(1332589);
   });
 
-  it('should set a longitude between 0 and 1800000', () => {
+  it('should set a longitude between 0 and 3600000', () => {
     const result = setLngInRange(5.565438);
-    expect(result).to.equal(955654);
+    expect(result).to.equal(1855654);
   });
 
   it('should restore a latitude', () => {
-    const result = unsetLatInRange(2232589);
+    const result = unsetLatInRange(1332589);
     expect(result).to.equal(43.2589);
   });
 
   it('should restore a longitude', () => {
-    const result = unsetLngInRange(955654);
+    const result = unsetLngInRange(1855654);
     expect(result).to.equal(5.5654);
   });
 
   it('should create a binary version of the latitude and longitude', () => {
-    const result = combineAsBinary(360, 180);
-    expect(result).to.equal('1101101110111010000000110110111011101000000');
+    const result = combineAsBinary(1800000, 3600000);
+    expect(result).to.equal('1101101110111010000001101101110111010000000');
   });
 
   it('should recreate latitudes and longitudes from binary', () => {
-    const {lat, lng} = binaryFromLatitudeLongitude('1101101110111010000000110110111011101000000');
-    expect(lat).to.equal(360);
-    expect(lng).to.equal(180);
+    const {lat, lng} = binaryFromLatitudeLongitude('1101101110111010000001101101110111010000000');
+    expect(lat).to.equal(1800000);
+    expect(lng).to.equal(3600000);
   });
 
   it('should shuffle', () => {
@@ -91,19 +91,19 @@ describe('Converter', () => {
 
   it('should generate three numbers from lat lng', () => {
     const result = getThreeNumbersFromLatLng(carnoux1.lat, carnoux1.lng);
-    expect(result).to.deep.equal([26721, 32388, 6787]);
+    expect(result).to.deep.equal([19543, 29888, 5276]);
   });
 
- xit('should generate three different numbers from different lat lng', () => {
+  it('should generate three different numbers from different lat lng', () => {
     const result = getThreeNumbersFromLatLng(carnoux2.lat, carnoux2.lng);
-    expect(result).to.deep.equal([25673, 31428, 6790]);
+    expect(result).to.deep.equal([18519, 25792, 5276]);
   });
 
   it('should get lat lng back from three numbers', () => {
-    const result = getLatLngFromThreeNumbers([26721, 32388, 6787]);
+    const result = getLatLngFromThreeNumbers([19543, 29888, 5276]);
     expect(result).to.deep.equal({
-      lat: carnoux2.lat,
-      lng: carnoux2.lng
+      lat: 43.2589,
+      lng: 5.5654
     });
   });
 
