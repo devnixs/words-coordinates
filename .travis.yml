@@ -7,6 +7,3 @@ install:
     - npm install -g istanbul 
 env:
     - npm_config_loglevel=warn
-script:
-    - npm run cover
-    - codecov
