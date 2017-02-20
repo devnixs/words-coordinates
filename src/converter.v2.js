@@ -58,7 +58,5 @@ export function getAccumulatorAtStep(finalStep) {
  }*/
 
 export function getSquareNumberLatitude(squareNumber) {
-    const steps = constants.earthPerimeter / (constants.stepSize * 3);
-    const currentLatitude = 90 - 90 * ((found * constants.saveEveryX) / steps);
 
 }
