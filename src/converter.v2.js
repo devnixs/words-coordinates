@@ -1,158 +1,64 @@
 import _ from 'lodash';
 
 import dictionnary from './words.json';
+import constants from './constants';
+import squaredata from './squaredata.json';
 
-const numberOfDecimals = 4;
-const numberOfIntegerNumbers = 3;
-const powerOften = Math.pow(10, numberOfDecimals);
-
-const shuffleMatrix = [
-    [0, 20, 40, 17, 37, 14, 34, 11, 31, 8, 28, 5, 25, 22, 24],
-    [1, 19, 41, 16, 38, 13, 35, 10, 32, 7, 29, 4, 26, 23, 27],
-    [21, 18, 42, 15, 39, 12, 36, 9, 33, 6, 30, 2, 3],
-]
-const shuffleVector = _.flatten(shuffleMatrix);
-
-
-export function getThreeWordsBinariesLengths() {
-    return [15, 15, 13]; // 43 characters
-}
-
-export function getLatLngBinariesLengths() {
-    return [21, 22]; // 43 characters
+export function getNumberOfSquareAtLatitude(lat) {
+    const colatitudeInDegrees = 90 - Math.abs(lat);
+    const colatitudeInRad = colatitudeInDegrees * Math.PI / 180;
+    let currentCircumference = Math.sin(colatitudeInRad) * constants.earthRadius * 2 * Math.PI;
+    let numberOfSquaresInThatArea = Math.round(currentCircumference / constants.stepSize);
+    return numberOfSquaresInThatArea;
 }
 
 
-export function convertToInteger(number) {
-    return Math.round(number * powerOften);
+export function getNumberOfSquareAtStep(step) {
+    const steps = constants.numberOfSteps;
+    const colatitudeInRad = (step / steps) * Math.PI / 2;
+    let currentCircumference = Math.sin(colatitudeInRad) * constants.earthRadius * 2 * Math.PI;
+    let numberOfSquaresInThatArea = Math.round(currentCircumference / constants.stepSize);
+    return numberOfSquaresInThatArea;
 }
 
-export function limitDecimals(number) {
-    return Number(number.toFixed(numberOfDecimals));
-}
+export function getAccumulatorAtStep(finalStep) {
+    const start = Math.floor(finalStep / constants.saveEveryX) * constants.saveEveryX;
+    const base = squaredata[Math.floor(finalStep / constants.saveEveryX)];
 
-export function padWithZeros(number) {
-    return _.padStart(String(number), numberOfDecimals + 1 + numberOfIntegerNumbers, '0'); // 4 decimals + dot + integer part
-}
-
-export function setLatInRange(input) {
-    if (input >= 0) {
-        return convertToInteger(input);
-    } else {
-        return convertToInteger(90 + Math.abs(input));
+    let complement = 0;
+    for (var step = start + 1; step <= finalStep; step++) {
+        complement += getNumberOfSquareAtStep(step);
     }
-}
-export function setLngInRange(input) {
-    return convertToInteger(input + 180);
-}
-
-export function unsetLatInRange(input) {
-    if (input >= 90 * powerOften) {
-        return -1 * limitDecimals((input) / powerOften - 90);
-    } else {
-        return limitDecimals((input) / powerOften);
-    }
-}
-export function unsetLngInRange(input) {
-    return limitDecimals(input / powerOften - 180);
-}
-
-function setLength(input, length) {
-    return _.padStart(_.trimStart(input, '0'), length, '0');
-}
-
-export function combineAsBinary(lat, lng) {
-    const binariesLengths = getLatLngBinariesLengths();
-
-    const latInteger = Math.floor(lat);
-    const lngInteger = Math.floor(lng);
-    const latAsBinary = latInteger.toString(2);
-    const lngAsBinary = lngInteger.toString(2);
-
-    const latCorrectLength = setLength(latAsBinary, binariesLengths[0]);
-    const lngCorrectLength = setLength(lngAsBinary, binariesLengths[1]);
-
-    return latCorrectLength + lngCorrectLength;
-}
-
-export function binaryToLatitudeLongitude(binary) {
-    const binariesLengths = getLatLngBinariesLengths();
-
-    const lat = binary.substr(0, binariesLengths[0]);
-    const lng = binary.substr(binariesLengths[0], binariesLengths[1]);
-
-    return {
-        lat: (parseInt(lat, 2)),
-        lng: (parseInt(lng, 2))
-    }
-}
-
-export function shuffle(input) {
-    let result = '';
-    for (let i = 0; i < shuffleVector.length; i++) {
-        result += input.substr(shuffleVector[i], 1);
-    }
-    return result;
-}
-
-export function unshuffle(input) {
-    let result = '';
-    for (let i = 0; i < shuffleVector.length; i++) {
-        result += input.substr(shuffleVector.indexOf(i), 1);
-    }
-    return result;
+    console.log(base, complement);
+    return base + complement;
 }
 
 
-export function split(input) {
-    const binariesLengths = getThreeWordsBinariesLengths();
-    return [
-        input.substr(0, binariesLengths[0]),
-        input.substr(binariesLengths[0], binariesLengths[1]),
-        input.substr(binariesLengths[0] + binariesLengths[1], binariesLengths[2]),
-    ]
-}
+/*
+ let found = null;
 
-export function unsplit(inputs) {
-    return inputs.join('');
-}
+ for (var index = 0; index < squaredata.length; index++) {
+ var accumulation = squaredata[index];
+ var nextAccumulation = squaredata[index + 1];
 
-export function getThreeNumbersFromLatLng(lat, lng) {
-    const latInRange = setLatInRange(lat);
-    const lngInRange = setLngInRange(lng);
+ if (next === undefined || (accumulation <= step && step < nextAccumulation)) {
+ found = index;
+ break;
+ }
+ }
 
-    const binary = combineAsBinary(latInRange, lngInRange);
-    const shuffled = shuffle(binary);
-    const splitted = split(shuffled);
+ let realStep = found * constants.saveEveryX;
 
-    return splitted.map(i => parseInt(i, 2));
-}
+ for(const )
 
-export function getLatLngFromThreeNumbers(numbers) {
-    const binariesLengths = getThreeWordsBinariesLengths();
-    const binaries = numbers.map(i => i.toString(2));
-    const padded = binaries.map((i, index) => setLength(i, binariesLengths[index]))
+ const accumulator = squaredata[currentLatitude];
 
-    const shuffled = unsplit(padded);
-    const binary = unshuffle(shuffled);
+ for (let step=found; step < found+constants.saveEveryX; step++) {
+ accumulator+=
+ }*/
 
-    const {lat, lng} = binaryToLatitudeLongitude(binary);
+export function getSquareNumberLatitude(squareNumber) {
+    const steps = constants.earthPerimeter / (constants.stepSize * 3);
+    const currentLatitude = 90 - 90 * ((found * constants.saveEveryX) / steps);
 
-    return {
-        lat: unsetLatInRange(lat),
-        lng: unsetLngInRange(lng),
-    }
-}
-
-
-export function getThreeWordsFromLatLng(lat, lng) {
-    return getThreeNumbersFromLatLng(lat,lng).map(i=>dictionnary[i]);
-}
-
-export function getLatLngFromThreeWords(words) {
-    return getLatLngFromThreeNumbers(words.map(i=>dictionnary.indexOf(i)));
-}
-
-export function doWordsExist(words) {
-    return !words.find(i=> dictionnary.indexOf(i)===-1)
 }
