@@ -15,7 +15,6 @@ let accumulator = 0;
 for (var index = 0; index < constants.numberOfSteps; index++) {
     let latitude = 90 - (index / constants.numberOfSteps) * 90
     let numberOfSquaresInThatArea = converter.getNumberOfSquareAtLatitude(latitude);
-    accumulator += numberOfSquaresInThatArea;
 
 
     if(index===123456){
@@ -28,6 +27,9 @@ for (var index = 0; index < constants.numberOfSteps; index++) {
     if(index % constants.saveEveryX === 0){
         values.push(accumulator);
     }
+
+
+    accumulator += numberOfSquaresInThatArea;
 }
 
 const json = JSON.stringify(values);
