@@ -14,8 +14,8 @@ export function getSquareCountAtLatitude(lat) {
 
 export function getLatitudeFromStep(step) {
     const steps = constants.numberOfSteps;
-    const colatitudeInDeg = Number(((step / steps) * 90).toFixed(constants.precisionDigits));
-    const latitude = 90 - colatitudeInDeg;
+    const colatitudeInDeg = (step / steps) * 90;
+    const latitude = trimDecimals(90 - colatitudeInDeg);
     return latitude;
 }
 
@@ -78,21 +78,25 @@ export function getLatitudeAndStepFromSquareNumber(squareNumber) {
     return {lat, step: foundStep};
 }
 
+export function trimDecimals(input, precision = constants.precisionDigits) {
+    const powerOfTen = Math.pow(10, precision);
+    return Number((Math.floor(input * powerOfTen) / powerOfTen).toFixed(precision));
+}
+
 export function getPositionFromSquareNumber(squareNumber) {
     const {lat, step} = getLatitudeAndStepFromSquareNumber(squareNumber);
     const squareCount = getSquareCountAtStep(step);
     const accumulationAtThisLatitude = getAccumulatorAtStep(step);
     const longitudeStep = squareNumber - accumulationAtThisLatitude;
-
     const percent = longitudeStep / squareCount;
     let degrees = percent * 360;
 
     if (degrees > 180) {
         const degreesDenormalized = 360 - degrees;
-        const lng = -1 * Number(degreesDenormalized.toFixed(constants.precisionDigits));
+        const lng = -1 * trimDecimals(degreesDenormalized);
         return {lat, lng};
     } else {
-        const lng = Number(degrees.toFixed(constants.precisionDigits));
+        const lng = trimDecimals(degrees);
         return {lat, lng};
     }
 }

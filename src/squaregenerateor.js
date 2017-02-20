@@ -13,7 +13,7 @@ const values = [];
 let accumulator = 0;
 
 for (var index = 0; index < constants.numberOfSteps; index++) {
-    let latitude = 90 - (index / constants.numberOfSteps) * 90
+    let latitude = 90 - (index / constants.numberOfSteps) * 90;
     let numberOfSquaresInThatArea = converter.getSquareCountAtLatitude(latitude);
 
 
@@ -31,6 +31,8 @@ for (var index = 0; index < constants.numberOfSteps; index++) {
 
     accumulator += numberOfSquaresInThatArea;
 }
+
+console.log(accumulator);
 
 const json = JSON.stringify(values);
 fs.writeFile('./src/squaredata.json', json, 'utf8',()=>console.log('done!'));
