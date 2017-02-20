@@ -29,7 +29,7 @@ const carnoux2 = {
   lng: 5.564971
 }
 
-describe('Converter', () => {
+xdescribe('Converter', () => {
   it('should convert to integers', () => {
     const result = convertToInteger(carnoux1.lat);
     expect(result).to.equal(432590);

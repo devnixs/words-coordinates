@@ -1,3 +1,8 @@
+const fs=require('fs');
+
+const constants = require('./constants');
+console.log(constants);
+
 const start = 90;
 const end = 0;
 
@@ -13,7 +18,6 @@ const values = [];
 let accumulator = 0;
 const saveEveryX=1000;
 
-console.log(numberOfSteps);
 
 for (var index = 0; index < numberOfSteps; index++) {
     let currentPosInRadians = Math.PI * (index / numberOfSteps) / 2;
@@ -26,5 +30,5 @@ for (var index = 0; index < numberOfSteps; index++) {
     }
 }
 
-console.log(values.length);
-console.log(accumulator);
+const json = JSON.stringify(values);
+fs.writeFile('./src/squaredata.json', json, 'utf8',()=>console.log('done!'));
