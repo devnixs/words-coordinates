@@ -14,7 +14,7 @@ let accumulator = 0;
 
 for (var index = 0; index < constants.numberOfSteps; index++) {
     let latitude = 90 - (index / constants.numberOfSteps) * 90
-    let numberOfSquaresInThatArea = converter.getNumberOfSquareAtLatitude(latitude);
+    let numberOfSquaresInThatArea = converter.getSquareCountAtLatitude(latitude);
 
 
     if(index===123456){

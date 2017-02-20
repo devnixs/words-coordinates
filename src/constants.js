@@ -11,6 +11,8 @@ const numberOfSteps = Math.abs(end-start) / stepSizeInDegree;
 
 const saveEveryX=1000;
 
+const precisionDigits = 5;
+
 export default {
     earthPerimeter,
     earthRadius,
@@ -18,5 +20,6 @@ export default {
     saveEveryX,
     percentToAchieve,
     stepSizeInDegree,
-    numberOfSteps
+    numberOfSteps,
+    precisionDigits
 }

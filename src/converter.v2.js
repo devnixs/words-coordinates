@@ -4,7 +4,7 @@ import dictionnary from './words.json';
 import constants from './constants';
 import squaredata from './squaredata.json';
 
-export function getNumberOfSquareAtLatitude(lat) {
+export function getSquareCountAtLatitude(lat) {
     const colatitudeInDegrees = 90 - Math.abs(lat);
     const colatitudeInRad = colatitudeInDegrees * Math.PI / 180;
     let currentCircumference = Math.sin(colatitudeInRad) * constants.earthRadius * 2 * Math.PI;
@@ -12,21 +12,21 @@ export function getNumberOfSquareAtLatitude(lat) {
     return numberOfSquaresInThatArea;
 }
 
-export function getStepLatitude(step) {
+export function getLatitudeFromStep(step) {
     const steps = constants.numberOfSteps;
-    const colatitudeInDeg = Number(((step / steps) * 90).toFixed(6));
+    const colatitudeInDeg = Number(((step / steps) * 90).toFixed(constants.precisionDigits));
     const latitude = 90 - colatitudeInDeg;
     return latitude;
 }
 
 
-export function getLatitudeStep(latitude) {
+export function getStepFromLatitude(latitude) {
     const colatitudeInDeg = 90 - latitude;
     const step = Math.floor((colatitudeInDeg / 90) * constants.numberOfSteps);
     return step;
 }
 
-export function getNumberOfSquareAtStep(step) {
+export function getSquareCountAtStep(step) {
     const steps = constants.numberOfSteps;
     const colatitudeInRad = (step / steps) * Math.PI / 2;
     let currentCircumference = Math.sin(colatitudeInRad) * constants.earthRadius * 2 * Math.PI;
@@ -40,13 +40,13 @@ export function getAccumulatorAtStep(finalStep) {
 
     let complement = 0;
     for (let step = start; step < finalStep; step++) {
-        complement += getNumberOfSquareAtStep(step);
+        complement += getSquareCountAtStep(step);
     }
     return base + complement;
 }
 
 
-export function getSquareNumberLatitude(squareNumber) {
+export function getLatitudeAndStepFromSquareNumber(squareNumber) {
     let stepToStartWith = -1;
     let accumulator;
     for (let stepMultiplied = 0; stepMultiplied < squaredata.length; stepMultiplied++) {
@@ -63,7 +63,7 @@ export function getSquareNumberLatitude(squareNumber) {
 
     let foundStep = -1;
     for (let step = stepToStartWith; step < stepToStartWith + constants.saveEveryX; step++) {
-        let numberOfSquares = getNumberOfSquareAtStep(step);
+        let numberOfSquares = getSquareCountAtStep(step);
         if (accumulator <= squareNumber && squareNumber < accumulator + numberOfSquares) {
             foundStep = step;
             break;
@@ -74,26 +74,44 @@ export function getSquareNumberLatitude(squareNumber) {
     if (foundStep == -1) {
         throw new Error("Could not find this location")
     }
-    const lat = getStepLatitude(foundStep);
-    return lat;
+    const lat = getLatitudeFromStep(foundStep);
+    return {lat, step: foundStep};
 }
 
-export function getSquareNumberPosition(squareNumber) {
-    const lat = getSquareNumberLatitude(squareNumber);
-    const step = getLatitudeStep(lat);
-    const squareCount = getNumberOfSquareAtStep(step);
+export function getPositionFromSquareNumber(squareNumber) {
+    const {lat, step} = getLatitudeAndStepFromSquareNumber(squareNumber);
+    const squareCount = getSquareCountAtStep(step);
     const accumulationAtThisLatitude = getAccumulatorAtStep(step);
     const longitudeStep = squareNumber - accumulationAtThisLatitude;
 
     const percent = longitudeStep / squareCount;
-
     let degrees = percent * 360;
-    degrees = Number(degrees.toFixed(6));
-    console.log(degrees);
+
     if (degrees > 180) {
-        const lng = -1 * Number((360 - degrees).toFixed(6));
+        const degreesDenormalized = 360 - degrees;
+        const lng = -1 * Number(degreesDenormalized.toFixed(constants.precisionDigits));
         return {lat, lng};
     } else {
-        return {lat, lng: degrees};
+        const lng = Number(degrees.toFixed(constants.precisionDigits));
+        return {lat, lng};
     }
 }
+
+export function getSquareNumberFromPosition(lat, lng) {
+    const step = getStepFromLatitude(lat);
+    const accumulator = getAccumulatorAtStep(step);
+
+    let normalizedLng;
+    if (lng >= 0) {
+        normalizedLng = lng;
+    } else {
+        normalizedLng = (360 + lng);
+    }
+
+    const numberOfSquaresAtThisLatitude = getSquareCountAtStep(step);
+    const lngPercent = normalizedLng / 360;
+    let longitudeStep = Math.floor(lngPercent * numberOfSquaresAtThisLatitude);
+
+    return accumulator + longitudeStep;
+}
+
