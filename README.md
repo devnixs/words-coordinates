@@ -4,10 +4,9 @@
 
 Converts Lat 43.258783, Lng 5.564971 to => brown, cat, house. Which is easier to remember or share.
 
-### [Try me!](https://devnixs.github.io/words-coordinates/)
+It has an average precision of **1.37 meters**. Take a look at [the tests](https://travis-ci.org/devnixs/words-coordinates) for a proof!
 
-Note : The current precision is **1.37 meters**.
-Take a look at [the tests](https://travis-ci.org/devnixs/words-coordinates) for a proof!
+### [Try me!](https://devnixs.github.io/words-coordinates/)
 
 ## How does it work?
 
