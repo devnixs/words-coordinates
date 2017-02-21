@@ -5,7 +5,7 @@ import {
     getLatLngFromThreeWords,
     getThreeWordsFromLatLng,
     doWordsExist,
-} from '../src/converter.v2.js';
+} from '../src/converter.js';
 import {expect, should} from 'chai';
 import constants from '../src/constants';
 import _ from 'lodash';

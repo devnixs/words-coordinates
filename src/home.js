@@ -3,7 +3,7 @@ import _ from 'lodash';
 import GoogleMap from 'google-map-react';
 import Marker from './marker.js';
 import styled from 'styled-components';
-import {getThreeWordsFromLatLng, getLatLngFromThreeWords, doWordsExist} from './converter.v2.js';
+import {getThreeWordsFromLatLng, getLatLngFromThreeWords, doWordsExist} from './converter.js';
 
 //https://coolors.co/335c67-fff3b0-e09f3e-9e2a2b-540b0e
 
