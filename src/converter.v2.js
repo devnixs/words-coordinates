@@ -13,25 +13,17 @@ const shuffleMatrix = [
 
 const shuffleVector = _.flatten(shuffleMatrix);
 
-export function getSquareCountAtLatitude(lat) {
-    const colatitudeInDegrees = 90 - Math.abs(lat);
-    const colatitudeInRad = colatitudeInDegrees * Math.PI / 180;
-    let currentCircumference = Math.sin(colatitudeInRad) * constants.earthRadius * 2 * Math.PI;
-    let numberOfSquaresInThatArea = Math.round(currentCircumference / constants.stepSize);
-    return numberOfSquaresInThatArea;
-}
-
 export function getLatitudeFromStep(step) {
     const steps = constants.numberOfSteps;
-    const colatitudeInDeg = (step / steps) * 90;
-    const latitude = trimDecimals(90 - colatitudeInDeg);
+    const colatitudeInDeg = (step / steps) * constants.latitudeRangeInDegree;
+    const latitude = trimDecimals(constants.latitudeRangeInDegree - colatitudeInDeg);
     return latitude;
 }
 
 
 export function getStepFromLatitude(latitude) {
-    const colatitudeInDeg = 90 - latitude;
-    const step = Math.floor((colatitudeInDeg / 90) * constants.numberOfSteps);
+    const colatitudeInDeg = constants.latitudeRangeInDegree - latitude;
+    const step = Math.round((colatitudeInDeg / constants.latitudeRangeInDegree) * constants.numberOfSteps);
     return step;
 }
 
@@ -83,13 +75,13 @@ export function getLatitudeAndStepFromSquareNumber(squareNumber) {
     if (foundStep == -1) {
         throw new Error("Could not find this location")
     }
+    // console.log("foundStep", foundStep);
     const lat = getLatitudeFromStep(foundStep);
     return {lat, step: foundStep};
 }
 
 export function trimDecimals(input, precision = constants.precisionDigits) {
-    const powerOfTen = Math.pow(10, precision);
-    return Number((Math.floor(input * powerOfTen) / powerOfTen).toFixed(precision));
+    return Number(input.toFixed(precision));
 }
 
 export function getPositionFromSquareNumber(squareNumber) {
@@ -97,6 +89,8 @@ export function getPositionFromSquareNumber(squareNumber) {
     const positiveSquareNumber = Math.abs(squareNumber);
     const {lat, step} = getLatitudeAndStepFromSquareNumber(positiveSquareNumber);
     const squareCount = getSquareCountAtStep(step);
+    // console.log("nbsquares1", squareCount);
+    // console.log("lat", lat);
     const accumulationAtThisLatitude = getAccumulatorAtStep(step);
     const longitudeStep = positiveSquareNumber - accumulationAtThisLatitude;
     const percent = longitudeStep / squareCount;
@@ -115,6 +109,7 @@ export function getSquareNumberFromPosition(lat, lng) {
     const sign = Math.sign(lat) || 1;
     const positiveLat = Math.abs(lat);
     const step = getStepFromLatitude(positiveLat);
+    // console.log("step", step);
     const accumulator = getAccumulatorAtStep(step);
 
     let normalizedLng;
@@ -125,8 +120,9 @@ export function getSquareNumberFromPosition(lat, lng) {
     }
 
     const numberOfSquaresAtThisLatitude = getSquareCountAtStep(step);
+    // console.log("nbsquares1", numberOfSquaresAtThisLatitude);
     const lngPercent = normalizedLng / 360;
-    let longitudeStep = Math.floor(lngPercent * numberOfSquaresAtThisLatitude);
+    let longitudeStep = Math.round(lngPercent * numberOfSquaresAtThisLatitude);
 
     return sign * (accumulator + longitudeStep);
 }
