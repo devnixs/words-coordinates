@@ -136,9 +136,12 @@ function setLength(input, length) {
 }
 
 export function convertSquareNumberToBinary(squareNumber) {
-    const squareNumberAsBinary = squareNumber.toString(2);
+    const sign = squareNumber >= 0 ? 0 : 1;
+    const squareNumberPositive = Math.abs(squareNumber);
+    const squareNumberAsBinary = squareNumberPositive.toString(2);
 
-    return setLength(squareNumberAsBinary, constants.numberOfBits);
+    const binaryWithoutSign = setLength(squareNumberAsBinary, constants.numberOfBits - 1);
+    return sign + binaryWithoutSign;
 }
 
 export function binaryToSquareNumber(binary) {
@@ -187,7 +190,6 @@ export function unshuffle(input) {
 
 export function getThreeNumbersFromLatLng(lat, lng) {
     const squareNumber = getSquareNumberFromPosition(lat, lng);
-
     const binary = convertSquareNumberToBinary(squareNumber);
     const shuffled = shuffle(binary);
     const splitted = split(shuffled);

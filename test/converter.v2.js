@@ -7,6 +7,7 @@ import {
     doWordsExist,
 } from '../src/converter.v2.js';
 import {expect, should} from 'chai';
+import constants from '../src/constants';
 should();
 
 describe('Converter', () => {
@@ -40,35 +41,20 @@ describe('Converter', () => {
     });
 
     it('should go back and forth in a lot of coordinates', () => {
-        for (let lat = -60; lat < 60; lat += 5) {
-            for (let lng = -100; lng < 180; lng += 10) {
-                const result = getSquareNumberFromPosition(lat, lng);
-                const localization = getPositionFromSquareNumber(result);
-                localization.lat.should.be.closeTo(lat, 0.00003, "latitude is incorrect");
-                localization.lng.should.be.closeTo(lng, 0.00008, `longitude is incorrect (lat=${localization.lat}, expected=${lat})`);
+        // The goal of this test is to prove that we can find 3 words for any location, and then from those three words, find the location back with a certain precision.
+
+        for (let lat = -85; lat < 85; lat += 5) {
+            for (let lng = -175; lng < 180; lng += 10) {
+                const result = getThreeWordsFromLatLng(lat, lng);
+                const localization = getLatLngFromThreeWords(result);
+                const circumferenceAtThisLatitude = Math.cos(lat * 2 * Math.PI / 360) * Math.PI * 2 * constants.earthRadius / 360;
+                const lngErrorInDegrees = Math.abs(localization.lat-lat);
+                const lngErrorInMeters = (lngErrorInDegrees / 360) * circumferenceAtThisLatitude;
+
+                expect(lngErrorInMeters).to.be.below(constants.stepSize);
+                expect(lngErrorInMeters).to.be.below(constants.stepSize);
             }
         }
-    });
-
-
-    it('should get three words from coordinates', () => {
-        const result = getThreeWordsFromLatLng(86.66736, 0.04646);
-        expect(result).to.deep.equal(["following", "basis", "pressing"]);
-    });
-
-    it('should get coordinates from three words', () => {
-        const localization = getLatLngFromThreeWords(["following", "basis", "pressing"]);
-        localization.lat.should.be.closeTo(86.66736, 0.00003, `latitude is incorrect`);
-        localization.lng.should.be.closeTo(0.04646, 0.00007, `longitude is incorrect`);
-    });
-
-
-
-    it('Test', () => {
-        const localization1 = getLatLngFromThreeWords(["spies", "fiercely" ,"numerals"]);
-        const localization2 = getLatLngFromThreeWords(["spies", "fiercely", "peppers"]);
-        console.log(localization1);
-        console.log(localization2);
     });
 
     it('should tell if words exist', () => {
