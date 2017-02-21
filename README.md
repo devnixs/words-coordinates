@@ -6,7 +6,7 @@ Converts Lat 43.258783, Lng 5.564971 to => brown, cat, house. Which is easier to
 
 ### [Try me!](https://devnixs.github.io/words-coordinates/)
 
-Note : The current precision is about **9 meters**. I'm working on a new algorithm that will bring that down to **3 meters**.
+Note : The current precision is about **4 meters**. I'm working on a new algorithm that will bring that down to **3 meters**.
 
 ## How does it work?
 

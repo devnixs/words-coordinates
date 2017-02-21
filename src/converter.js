@@ -131,7 +131,7 @@ export function getThreeNumbersFromLatLng(lat, lng) {
 export function getLatLngFromThreeNumbers(numbers) {
     const binariesLengths = getThreeWordsBinariesLengths();
     const binaries = numbers.map(i => i.toString(2));
-    const padded = binaries.map((i, index) => setLength(i, binariesLengths[index]))
+    const padded = binaries.map((i, index) => setLength(i, binariesLengths[index]));
 
     const shuffled = unsplit(padded);
     const binary = unshuffle(shuffled);

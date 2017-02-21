@@ -4,6 +4,15 @@ import dictionnary from './words.json';
 import constants from './constants';
 import squaredata from './squaredata.json';
 
+
+const shuffleMatrix = [
+    [0, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42,],
+    [1, 4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34, 37, 40, 43,],
+    [2, 5, 8, 11, 14, 17, 20, 23, 26, 29, 32, 35, 38, 41, 44,],
+]
+
+const shuffleVector = _.flatten(shuffleMatrix);
+
 export function getSquareCountAtLatitude(lat) {
     const colatitudeInDegrees = 90 - Math.abs(lat);
     const colatitudeInRad = colatitudeInDegrees * Math.PI / 180;
@@ -84,25 +93,28 @@ export function trimDecimals(input, precision = constants.precisionDigits) {
 }
 
 export function getPositionFromSquareNumber(squareNumber) {
-    const {lat, step} = getLatitudeAndStepFromSquareNumber(squareNumber);
+    const sign = Math.sign(squareNumber) || 1;
+    const positiveSquareNumber = Math.abs(squareNumber);
+    const {lat, step} = getLatitudeAndStepFromSquareNumber(positiveSquareNumber);
     const squareCount = getSquareCountAtStep(step);
     const accumulationAtThisLatitude = getAccumulatorAtStep(step);
-    const longitudeStep = squareNumber - accumulationAtThisLatitude;
+    const longitudeStep = positiveSquareNumber - accumulationAtThisLatitude;
     const percent = longitudeStep / squareCount;
     let degrees = percent * 360;
-
     if (degrees > 180) {
         const degreesDenormalized = 360 - degrees;
         const lng = -1 * trimDecimals(degreesDenormalized);
-        return {lat, lng};
+        return {lat: lat * sign, lng};
     } else {
         const lng = trimDecimals(degrees);
-        return {lat, lng};
+        return {lat: lat * sign, lng};
     }
 }
 
 export function getSquareNumberFromPosition(lat, lng) {
-    const step = getStepFromLatitude(lat);
+    const sign = Math.sign(lat) || 1;
+    const positiveLat = Math.abs(lat);
+    const step = getStepFromLatitude(positiveLat);
     const accumulator = getAccumulatorAtStep(step);
 
     let normalizedLng;
@@ -116,6 +128,96 @@ export function getSquareNumberFromPosition(lat, lng) {
     const lngPercent = normalizedLng / 360;
     let longitudeStep = Math.floor(lngPercent * numberOfSquaresAtThisLatitude);
 
-    return accumulator + longitudeStep;
+    return sign * (accumulator + longitudeStep);
 }
 
+function setLength(input, length) {
+    return _.padStart(_.trimStart(input, '0'), length, '0');
+}
+
+export function convertSquareNumberToBinary(squareNumber) {
+    const squareNumberAsBinary = squareNumber.toString(2);
+
+    return setLength(squareNumberAsBinary, constants.numberOfBits);
+}
+
+export function binaryToSquareNumber(binary) {
+    const adjustedBinary = setLength(binary, constants.numberOfBits);
+
+    const sign = adjustedBinary.substr(0, 1);
+    const rest = adjustedBinary.substr(1);
+
+    const squareNumber = parseInt(rest, 2);
+    if (Number(sign) === 0) {
+        return squareNumber;
+    } else {
+        return -1 * squareNumber;
+    }
+}
+
+export function split(input) {
+    const binariesLengths = constants.wordBitsLengths;
+    return [
+        input.substr(0, binariesLengths[0]),
+        input.substr(binariesLengths[0], binariesLengths[1]),
+        input.substr(binariesLengths[0] + binariesLengths[1], binariesLengths[2]),
+    ]
+}
+
+export function unsplit(inputs) {
+    return inputs.join('');
+}
+
+
+export function shuffle(input) {
+    let result = '';
+    for (let i = 0; i < shuffleVector.length; i++) {
+        result += input.substr(shuffleVector[i], 1);
+    }
+    return result;
+}
+
+export function unshuffle(input) {
+    let result = '';
+    for (let i = 0; i < shuffleVector.length; i++) {
+        result += input.substr(shuffleVector.indexOf(i), 1);
+    }
+    return result;
+}
+
+export function getThreeNumbersFromLatLng(lat, lng) {
+    const squareNumber = getSquareNumberFromPosition(lat, lng);
+
+    const binary = convertSquareNumberToBinary(squareNumber);
+    const shuffled = shuffle(binary);
+    const splitted = split(shuffled);
+
+    return splitted.map(i => parseInt(i, 2));
+}
+
+export function getPositionFromThreeNumbers(numbers) {
+    const binariesLengths = constants.wordBitsLengths;
+    const binaries = numbers.map(i => i.toString(2));
+    const padded = binaries.map((i, index) => setLength(i, binariesLengths[index]));
+
+    const shuffled = unsplit(padded);
+    const binary = unshuffle(shuffled);
+
+    const squareNumber = binaryToSquareNumber(binary);
+
+    return getPositionFromSquareNumber(squareNumber);
+}
+
+
+export function getThreeWordsFromLatLng(lat, lng) {
+    return getThreeNumbersFromLatLng(lat, lng).map(i => dictionnary[i]);
+}
+
+export function getLatLngFromThreeWords(words) {
+    const numbers = words.map(i => dictionnary.indexOf(i));
+    return getPositionFromThreeNumbers(numbers);
+}
+
+export function doWordsExist(words) {
+    return !words.find(i => dictionnary.indexOf(i) === -1)
+}
