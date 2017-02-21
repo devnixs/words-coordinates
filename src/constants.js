@@ -3,10 +3,10 @@ const earthPerimeter = 40007864;
 //const earthPerimeter = 2 * Math.PI * earthRadius;
 
 
-// This is not chosen randomly. This gives 17196163978422 squares on the northen hemisphere.
+// This is not chosen randomly. This gives 17559119551502 squares on the northen hemisphere.
 // Which can be stored in 44 bits, plus the bit sign, leads to 45 bits.
 // This can then easily be divided into 3, 15 bits numbers, that can be transformed into words.
-const stepSize = 3.85;
+const stepSize = 3.81;
 const numberOfBits = 45;
 
 // this describes how the data is splitted in 3 words. The total must match the number of bits

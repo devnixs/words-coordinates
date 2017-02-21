@@ -75,9 +75,8 @@ export function getLatitudeAndStepFromSquareNumber(squareNumber) {
     if (foundStep == -1) {
         throw new Error("Could not find this location")
     }
-    // console.log("foundStep", foundStep);
     const lat = getLatitudeFromStep(foundStep);
-    return {lat, step: foundStep};
+    return {lat, step: foundStep, accumulator};
 }
 
 export function trimDecimals(input, precision = constants.precisionDigits) {
@@ -87,12 +86,9 @@ export function trimDecimals(input, precision = constants.precisionDigits) {
 export function getPositionFromSquareNumber(squareNumber) {
     const sign = Math.sign(squareNumber) || 1;
     const positiveSquareNumber = Math.abs(squareNumber);
-    const {lat, step} = getLatitudeAndStepFromSquareNumber(positiveSquareNumber);
+    const {lat, step, accumulator} = getLatitudeAndStepFromSquareNumber(positiveSquareNumber);
     const squareCount = getSquareCountAtStep(step);
-    // console.log("nbsquares1", squareCount);
-    // console.log("lat", lat);
-    const accumulationAtThisLatitude = getAccumulatorAtStep(step);
-    const longitudeStep = positiveSquareNumber - accumulationAtThisLatitude;
+    const longitudeStep = positiveSquareNumber - accumulator;
     const percent = longitudeStep / squareCount;
     let degrees = percent * 360;
     if (degrees > 180) {
@@ -109,7 +105,6 @@ export function getSquareNumberFromPosition(lat, lng) {
     const sign = Math.sign(lat) || 1;
     const positiveLat = Math.abs(lat);
     const step = getStepFromLatitude(positiveLat);
-    // console.log("step", step);
     const accumulator = getAccumulatorAtStep(step);
 
     let normalizedLng;
@@ -120,7 +115,6 @@ export function getSquareNumberFromPosition(lat, lng) {
     }
 
     const numberOfSquaresAtThisLatitude = getSquareCountAtStep(step);
-    // console.log("nbsquares1", numberOfSquaresAtThisLatitude);
     const lngPercent = normalizedLng / 360;
     let longitudeStep = Math.round(lngPercent * numberOfSquaresAtThisLatitude);
 

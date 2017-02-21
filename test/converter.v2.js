@@ -25,35 +25,35 @@ function getErrors(lat, lng, expectedLat, expectedLng) {
 
 describe('Converter', () => {
 
-    xit('should trim decimals', () => {
+    it('should trim decimals', () => {
         const result = trimDecimals(43.258996, 5);
         expect(result).to.equal(43.259);
     });
 
-    xit('should trim decimals', () => {
+    it('should trim decimals', () => {
         const result = trimDecimals(43.258, 5);
         expect(result).to.equal(43.258);
     });
 
-    xit('two consecutive numbers should get different results', () => {
+    it('two consecutive numbers should get different results', () => {
         const result1 = getPositionFromSquareNumber(47895026804);
         const result2 = getPositionFromSquareNumber(47895026805);
         expect(result1.lat !== result2.lat || result1.lng !== result2.lng).to.equal(true);
     });
 
-    xit('two consecutive positions should get different results, in the vertical direction', () => {
+    it('two consecutive positions should get different results, in the vertical direction', () => {
         const result1 = getSquareNumberFromPosition(86.66734, 0.04641);
         const result2 = getSquareNumberFromPosition(86.66737, 0.04641);
         expect(result1).not.to.equal(result2);
     });
 
-    xit('two consecutive positions should get different results, in the horizontal direction', () => {
+    it('two consecutive positions should get different results, in the horizontal direction', () => {
         const result1 = getSquareNumberFromPosition(46.66734, 0.04641);
         const result2 = getSquareNumberFromPosition(46.66734, 0.04647);
         expect(result1).not.to.equal(result2);
     });
 
-    it('High error debug 1:', () => {
+    xit('High error debug 1:', () => {
         const expectedLat = -82.37850061605604;
         const expectedLng = -112.1172430680108;
         const squareNumber = getSquareNumberFromPosition(expectedLat, expectedLng);
@@ -64,36 +64,10 @@ describe('Converter', () => {
         expect(err.combinedErrorInMeters).to.be.below(20);
     });
 
-
-    it('High error debug 2:', () => {
-        const expectedLat = -64.26015975057226;
-        const expectedLng = -138.47593787513506;
-        const squareNumber = getSquareNumberFromPosition(expectedLat, expectedLng);
-        // console.log("-------------");
-        const {lat, lng} = getPositionFromSquareNumber(squareNumber);
-        // console.log("final:",lat, lng);
-        const err = getErrors(lat, lng, expectedLat, expectedLng);
-        expect(err.combinedErrorInMeters).to.be.below(20);
-    });
-
-    xit('High error debug 3:', () => {
-        const expectedLat = -62.16890050964321;
-        const expectedLng = 109.70528170724356;
-        const squareNumber = getSquareNumberFromPosition(expectedLat, expectedLng);
-        console.log("-------------");
-        const {lat, lng} = getPositionFromSquareNumber(squareNumber);
-        console.log("final:", lat, lng);
-        console.log("expected:", expectedLat, expectedLng);
-        const err = getErrors(lat, lng, expectedLat, expectedLng);
-        console.log("errors:",err);
-        expect(err.combinedErrorInMeters).to.be.below(20);
-    });
-
-
     it('should compute the average error and ensure the individual errors aren\'t too high', function () {
         // The goal of this test is to prove that we can find 3 words for any location, and then from those three words, find the location back with a certain precision.
 
-        this.timeout(50000);
+        this.timeout(500000);
 
         var seed = 1;
 
@@ -149,3 +123,4 @@ describe('Converter', () => {
     });
 
 });
+
