@@ -8,6 +8,7 @@ import {
 } from '../src/converter.v2.js';
 import {expect, should} from 'chai';
 import constants from '../src/constants';
+import _ from 'lodash';
 should();
 
 describe('Converter', () => {
@@ -40,21 +41,30 @@ describe('Converter', () => {
         expect(result1).not.to.equal(result2);
     });
 
-    it('should go back and forth in a lot of coordinates', () => {
+    it('should compute the average error and ensure the individual errors aren\'t too high', () => {
         // The goal of this test is to prove that we can find 3 words for any location, and then from those three words, find the location back with a certain precision.
+        const errors=[];
 
         for (let lat = -85; lat < 85; lat += 5) {
-            for (let lng = -175; lng < 180; lng += 10) {
+            for (let lng = -175; lng < 180; lng += 5) {
                 const result = getThreeWordsFromLatLng(lat, lng);
                 const localization = getLatLngFromThreeWords(result);
-                const circumferenceAtThisLatitude = Math.cos(lat * 2 * Math.PI / 360) * Math.PI * 2 * constants.earthRadius / 360;
-                const lngErrorInDegrees = Math.abs(localization.lat-lat);
+                const circumferenceAtThisLatitude = Math.cos(lat * 2 * Math.PI / 360) * Math.PI * 2 * constants.earthRadius;
+                const lngErrorInDegrees = Math.abs(localization.lng-lng);
                 const lngErrorInMeters = (lngErrorInDegrees / 360) * circumferenceAtThisLatitude;
 
-                expect(lngErrorInMeters).to.be.below(constants.stepSize);
-                expect(lngErrorInMeters).to.be.below(constants.stepSize);
+                const latErrorInDegrees = Math.abs(localization.lat-lat);
+                const latErrorInMeters = (latErrorInDegrees / 360) * constants.earthPerimeter;
+
+                errors.push(latErrorInMeters);
+                errors.push(lngErrorInMeters);
+
+                expect(lngErrorInMeters).to.be.below(constants.stepSize*1.3,`Lng error to high. ExpLat=${lat}, ResLat=${localization.lat}, ExpLng=${lng}, ResLng=${localization.lng}, `);
+                expect(latErrorInMeters).to.be.below(constants.stepSize*1.3,`Lat error to high. ExpLat=${lat}, ResLat=${localization.lat}, ExpLng=${lng}, ResLng=${localization.lng}, `);
             }
         }
+
+        console.log("Average error in meters : ", (_.sum(errors)/errors.length).toFixed(2))
     });
 
     it('should tell if words exist', () => {
