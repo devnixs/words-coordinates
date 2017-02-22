@@ -10,6 +10,10 @@ It has an average precision of **1.45 meters**. Take a look at [the tests](https
 
 ## How does it work?
 
+Note: The algorithm has changed and this is not the current implementation.
+This algorithm only gives a precision of 5 meters.
+I'll write the description of the new algorithm soon.
+
 | Step  		                        | Result |
 | ------------------------------------ | ------------- |
 | Start with the base coordinates  | 43.258783, 5.564971  |
