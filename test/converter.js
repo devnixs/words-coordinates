@@ -53,17 +53,6 @@ describe('Converter', () => {
         expect(result1).not.to.equal(result2);
     });
 
-    xit('High error debug 1:', () => {
-        const expectedLat = -82.37850061605604;
-        const expectedLng = -112.1172430680108;
-        const squareNumber = getSquareNumberFromPosition(expectedLat, expectedLng);
-        // console.log("-------------");
-        const {lat, lng} = getPositionFromSquareNumber(squareNumber);
-        // console.log("final:",lat, lng);
-        const err = getErrors(lat, lng, expectedLat, expectedLng);
-        expect(err.combinedErrorInMeters).to.be.below(20);
-    });
-
     it('should compute the average error and ensure the individual errors aren\'t too high', function () {
         // The goal of this test is to prove that we can find 3 words for any location, and then from those three words, find the location back with a certain precision.
 
